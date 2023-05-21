@@ -27,35 +27,50 @@ const Calculator = () => {
 		setResult(result.slice(0, -1));
 	};
 
+	const performCalculation = (a, b, operator) => {
+		switch (operator) {
+			case '+':
+				return add(a, b);
+			case '-':
+				return subtract(a, b);
+			case '*':
+				return multiply(a, b);
+			case '/':
+				return divide(a, b);
+			default:
+				throw new Error('Invalid operator');
+		}
+	};
+
 	const handleCalculate = () => {
 		try {
+			const operators = ['+', '-', '*', '/'];
 			let calculatedResult;
-			if (result.includes('+')) {
-				const [a, b] = result.split('+');
-				calculatedResult = add(a, b);
-			} else if (result.includes('-')) {
-				const [a, b] = result.split('-');
-				calculatedResult = subtract(a, b);
-			} else if (result.includes('*')) {
-				const [a, b] = result.split('*');
-				calculatedResult = multiply(a, b);
-			} else if (result.includes('/')) {
-				const [a, b] = result.split('/');
-				calculatedResult = divide(a, b);
+
+			for (const operator of operators) {
+				if (result.includes(operator)) {
+					const [a, b] = result.split(operator);
+					calculatedResult = performCalculation(a, b, operator);
+					break;
+				}
+			}
+
+			if (calculatedResult === undefined) {
+				throw new Error('Invalid expression');
 			}
 
 			if (isNaN(calculatedResult)) {
-				setError(true); // Установка состояния ошибки при некорректном выражении
-				setResult('некоррекное выражение');
+				setError(true);
+				setResult('Invalid expression');
 			} else {
-				setError(false); // Сброс состояния ошибки при успешном вычислении
+				setError(false);
 				setResult(calculatedResult.toString());
-				console.log('вычисление прошло успешно');
+				console.log('Calculation complete');
 			}
 		} catch (error) {
-			setError(true); // Установка состояния ошибки при возникновении ошибки в вычислениях
+			setError(true);
 			setResult('Error occurred');
-			console.log('Ошибка в процессе вычисления', error);
+			console.log('Error occurred during calculation:', error);
 		}
 	};
 
